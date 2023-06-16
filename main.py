@@ -16,7 +16,7 @@ envHeight = 7
 backgroundColor = (25, 25, 25)
 
 environment = np.zeros((envHeight, envWidth))
-entity = np.zeros((envHeight, envWidth))
+cellState = np.zeros((envHeight, envWidth))
 # Set the colors
 
 
@@ -36,7 +36,7 @@ initEnv()
 
 
 def nextStep():  # check for only one step forward possible
-    global entity
+    global cellState
     stepTaken=False
     entityCache = entity.copy()
     for x in range(envWidth - 1):
@@ -62,7 +62,7 @@ def showSpace():
             cellColor = (0, 0, 0)
             if environment[y][x] == 1:  # seat
                 cellColor = (0, 0, 255)
-            if entity[y][x] == 1:  # entity
+            if cellState[y][x] == 1:  # entity
                 cellColor = (245, 245, 220)
             pygame.draw.rect(screen, cellColor, (
                 screenWidth * 0.1 + x * screenWidth * gridSize, screenHeight * 0.1 + y * screenWidth * gridSize,
@@ -81,7 +81,7 @@ while running:  # main loop
         start_time = current_time
         nextStep()
         if currentStepNumber%5==0:
-            entity[3][0] = 1
+            cellState[3][0] = 1
         currentStepNumber=currentStepNumber+1
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
