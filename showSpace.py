@@ -30,6 +30,10 @@ def showSpace(envWidth, envHeight, envResolution, environment, cellState, entiti
         for y in range(int(envHeight * envResolution)):  # loops for entities
             if cellState[x][y] > 0:  # passanger
                 cellColor = (245, 245, 220)
+                if entities[int(cellState[x][y]) - 1].changeSeat:
+                    cellColor = (245, 10, 245)
+                if entities[int(cellState[x][y]) - 1].awaitingSeatChange:
+                    cellColor = (245, 10, 100)
                 diameter = entities[int(cellState[x][y]) - 1].diameter * screenWidth * gridSize * 0.5
                 xHighRes = entities[int(cellState[x][y]) - 1].position[0] * envResolution
                 yHighRes = entities[int(cellState[x][y]) - 1].position[1] * envResolution

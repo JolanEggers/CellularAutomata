@@ -23,9 +23,16 @@ def nextEntityFromCSV(entitiesCSV):
         nextPosition = (entitiesCSV.iloc[currentLen]["positionX"], entitiesCSV.iloc[currentLen]["positionY"])
         nextDiameter = entitiesCSV.iloc[currentLen]["diameter"]
         nextSpeed = entitiesCSV.iloc[currentLen]["speed"]
-        entities.append(
-            Entity(index=nextIndex, target=nextTarget, position=nextPosition, diameter=nextDiameter, speed=nextSpeed))
-        entitiesToCellState()
+
+        doAdd = True  # only add next entity, if there is nothing in the way
+        if currentLen > 0:
+            if entities[0].collisionAtPoint(nextPosition[0], nextPosition[1], cellState, environment, entities):
+                doAdd = False
+        if doAdd:
+            entities.append(
+                Entity(index=nextIndex, target=nextTarget, position=nextPosition, diameter=nextDiameter,
+                       speed=nextSpeed))
+            entitiesToCellState()
 
 
 def initEnv():
@@ -61,7 +68,7 @@ def main():
     running = True
     start_time = time.time()
     currentStepNumber = 0
-    entitiesCSV = pd.read_csv("reversePyramid.csv")
+    entitiesCSV = pd.read_csv("randomBoarding.csv")
     while running:
         current_time = time.time()
         elapsed_time = current_time - start_time
