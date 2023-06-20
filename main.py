@@ -68,7 +68,7 @@ def main():
     running = True
     start_time = time.time()
     currentStepNumber = 0
-    entitiesCSV = pd.read_csv("randomBoarding.csv")
+    entitiesCSV = pd.read_csv("testBoarding.csv")
     while running:
         current_time = time.time()
         elapsed_time = current_time - start_time
