@@ -26,7 +26,7 @@ def nextEntityFromCSV(entitiesCSV):
 
         doAdd = True  # only add next entity, if there is nothing in the way
         if currentLen > 0:
-            if entities[0].collisionAtPoint(nextPosition[0]+0.25, nextPosition[1], cellState, environment, entities):
+            if entities[0].collisionAtPoint(nextPosition[0], nextPosition[1], cellState, environment, entities):
                 doAdd = False
         if doAdd:
             entities.append(
@@ -74,7 +74,7 @@ def main():
         if elapsed_time >= 0.02:  # 50 steps per second
             start_time = current_time
             nextStep()
-            if currentStepNumber % (1 * timeResolution) == 0:
+            if currentStepNumber % (2 * timeResolution) == 0:
                 if testC==0:
                     nextEntityFromCSV(entitiesCSV)
             currentStepNumber = currentStepNumber + 1
