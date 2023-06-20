@@ -3,7 +3,12 @@ import random
 import numpy as np
 import pandas as pd
 
-availableSeats = pd.read_csv("availableSeats.csv")
+#availableSeats = pd.read_csv("availableSeats.csv")
+availableSeats = []
+for x in range (11):
+    for y in range(7):
+        if y != 3:
+            availableSeats.append((x+1.9,y*0.5+0.75))
 fillPercentage = 1  # how many of the seats should be filled
 entityNumbers = np.zeros(len(availableSeats))
 for i in range(len(entityNumbers)):
@@ -12,11 +17,15 @@ for i in range(len(entityNumbers)):
 entityNumbers = random.sample(entityNumbers.tolist(), int(len(entityNumbers) * fillPercentage))  # shuffel passengers
 
 seatPlan = []
+
+
 for i in range(len(entityNumbers)):
     seatNumber=int(entityNumbers[i])
 
-    targetX = availableSeats.iloc[seatNumber]["targetX"]
-    targetY = availableSeats.iloc[seatNumber]["targetY"]
+    #targetX = availableSeats.iloc[seatNumber]["targetX"]
+    #targetY = availableSeats.iloc[seatNumber]["targetY"]
+    targetX = availableSeats[seatNumber][0]
+    targetY = availableSeats[seatNumber][1]
     seatPlan.append([(i + 1), targetX, targetY, 0.75, 2.24, 0.3, 1])
 
 df = pd.DataFrame(seatPlan, columns=["index", "targetX", "targetY", "positionX", "positionY", "diameter", "speed"])

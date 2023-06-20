@@ -5,10 +5,10 @@ import pygame
 from showSpace import *
 from entity import *
 
-envWidth = 7.5
+envWidth = 13.5
 envHeight = 4.6
-envResolution = 20
-timeResolution = 20.0
+envResolution = 15
+timeResolution = 15.0
 
 environment = np.zeros((int(envWidth * envResolution), int(envHeight * envResolution)))
 cellState = np.zeros((int(envWidth * envResolution), int(envHeight * envResolution)))
@@ -28,7 +28,11 @@ def nextEntityFromCSV(entitiesCSV):
         if currentLen > 0:
             if entities[0].collisionAtPoint(nextPosition[0], nextPosition[1], cellState, environment, entities):
                 doAdd = False
-            if entities[0].collisionAtPoint(nextPosition[0]-entities[0].diameter, nextPosition[1], cellState, environment, entities):
+            if entities[0].collisionAtPoint(nextPosition[0] - entities[0].diameter, nextPosition[1], cellState,
+                                            environment, entities):
+                doAdd = False
+            if entities[0].collisionAtPoint(nextPosition[0] + entities[0].diameter, nextPosition[1], cellState,
+                                            environment, entities):
                 doAdd = False
         if doAdd:
             entities.append(
@@ -40,10 +44,10 @@ def nextEntityFromCSV(entitiesCSV):
 def initEnv():
     for x in range(int(envWidth * envResolution)):
         for y in range(int(envHeight * envResolution)):
-            if int(2 * y / envResolution) != 4:
+            if int(2 * y / envResolution) != 4 and x > 1 * envResolution:
                 if int(2 * x / envResolution) % 2 == 0:
-                    environment[x][y] = 1
-            if x < 0.2 * envResolution or x > (envWidth - 0.5) * envResolution - 1:
+                    environment[x][y] = 1  # seats
+            if x < 0.1 * envResolution or x > (envWidth - 0.5) * envResolution - 1:
                 environment[x][y] = 2
             if y < 0.5 * envResolution or y > (envHeight - 0.5) * envResolution - 1:
                 environment[x][y] = 2
@@ -62,6 +66,17 @@ def nextStep():  # check for only one step forward possible
     entitiesToCellState()
 
 
+def isOptimal(entitiesCSV):
+    isOptimalReturn = True
+    if len(entities)==len(entitiesCSV):
+        for entity in entities:
+            if entity.state != 100:  # check if every entity is seated
+                isOptimalReturn = False
+    else:
+        isOptimalReturn = False
+    return isOptimalReturn
+
+
 def main():
     initEnv()
     print("init")
@@ -69,23 +84,28 @@ def main():
     start_time = time.time()
     currentStepNumber = 0
     entitiesCSV = pd.read_csv("out.csv")
-    testC=0
+    testC = 0
     while running:
         current_time = time.time()
         elapsed_time = current_time - start_time
-        if elapsed_time >= 0.02:  # 50 steps per second
+        if elapsed_time >= 0.0:  # 50 steps per second
             start_time = current_time
             nextStep()
+            if isOptimal(entitiesCSV):
+                with open("randomBoardingResults.csv", "a") as myfile:
+                    myfile.write(f",{currentStepNumber}")
+                running = False
+                print(currentStepNumber)
             if currentStepNumber % (timeResolution) == 0:
-                if testC==0:
+                if testC == 0:
                     nextEntityFromCSV(entitiesCSV)
             currentStepNumber = currentStepNumber + 1
         for event in pygame.event.get():
-            if event.type==768:
-                testC=1-testC
+            if event.type == 768:
+                testC = 1 - testC
             if event.type == pygame.QUIT:
                 running = False
-        showSpace(envWidth, envHeight, envResolution, environment, cellState, entities)
+        #showSpace(envWidth, envHeight, envResolution, environment, cellState, entities)
 
 
 if __name__ == "__main__":

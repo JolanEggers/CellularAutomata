@@ -210,6 +210,13 @@ class Entity:
         else:
             self.pleaseMoveX = 0  # continue forward
 
+        if self.wait == -1:  # as backup, so it doesn't get stuck
+            self.wait = 2
+        self.wait -= 1 / timeResolution
+        if self.wait <= 0:
+            self.pleaseMoveX = 0  # continue forward
+            self.wait = -1
+
     def moveToX(self, cellStateInternal, environmentInternal, entities):
         error = (self.target[0] - 0.2 - self.position[0]) * 10  # target
         if abs(error) > 0.1:
@@ -256,11 +263,12 @@ class Entity:
     def storeLuggage(self):
         if not self.luggageStored:
             if self.wait == -1:
-                self.wait = 1
+                self.wait = 2
             self.wait -= 1 / timeResolution
             if self.wait <= 0:
                 self.luggageStored = True
                 self.state = 2
+                self.wait = -1
         else:
             self.state = 2
 

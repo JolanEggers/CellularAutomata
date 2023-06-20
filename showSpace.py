@@ -6,9 +6,9 @@ pygame.init()
 WINDOW_SIZE = (screenWidth, screenHeight)
 screen = pygame.display.set_mode(WINDOW_SIZE)
 font = pygame.font.Font(None, 20)
-gridSize = 0.08
+gridSize = 0.07
 backgroundColor = (255, 255, 255)
-lineThickness = 0.00
+lineThickness = -0.1
 
 
 def showSpace(envWidth, envHeight, envResolution, environment, cellState, entities):
@@ -21,7 +21,7 @@ def showSpace(envWidth, envHeight, envResolution, environment, cellState, entiti
             if environment[x][y] == 2:  # wall
                 cellColor = (125, 0, 0)
             pygame.draw.rect(screen, cellColor, (
-                screenWidth * 0.1 + (x + lineThickness) * screenWidth * gridSize / envResolution,
+                screenWidth * 0.05 + (x + lineThickness) * screenWidth * gridSize / envResolution,
                 screenHeight * 0.1 + (y + lineThickness) * screenWidth * gridSize / envResolution,
                 screenWidth * gridSize * (1.0 - lineThickness) / envResolution,
                 screenWidth * gridSize * (1.0 - lineThickness) / envResolution))
@@ -39,7 +39,7 @@ def showSpace(envWidth, envHeight, envResolution, environment, cellState, entiti
                 diameter = entities[int(cellState[x][y]) - 1].diameter * screenWidth * gridSize * 0.5
                 xHighRes = entities[int(cellState[x][y]) - 1].position[0] * envResolution
                 yHighRes = entities[int(cellState[x][y]) - 1].position[1] * envResolution
-                entityCenterOnScreen = (screenWidth * 0.1 + (xHighRes + 0.5) * screenWidth * gridSize / envResolution,
+                entityCenterOnScreen = (screenWidth * 0.05 + (xHighRes + 0.5) * screenWidth * gridSize / envResolution,
                                         screenHeight * 0.1 + (yHighRes + 0.5) * screenWidth * gridSize / envResolution)
                 pygame.draw.circle(screen, cellColor,
                                    entityCenterOnScreen,
