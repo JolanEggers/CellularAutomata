@@ -32,7 +32,7 @@ def showSpace(envWidth, envHeight, envResolution, environment, cellState, entiti
                 cellColor = (245, 245, 220)
                 if entities[int(cellState[x][y]) - 1].changeSeatFor >= 0:
                     cellColor = (245, 10, 245)
-                if entities[int(cellState[x][y]) - 1].awaitingSeatChangeFor >= 0:
+                if len(entities[int(cellState[x][y]) - 1].awaitingSeatChangeFor) > 0:
                     cellColor = (245, 10, 100)
                 diameter = entities[int(cellState[x][y]) - 1].diameter * screenWidth * gridSize * 0.5
                 xHighRes = entities[int(cellState[x][y]) - 1].position[0] * envResolution

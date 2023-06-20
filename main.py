@@ -5,7 +5,7 @@ import pygame
 from showSpace import *
 from entity import *
 
-envWidth = 7
+envWidth = 7.5
 envHeight = 4.6
 envResolution = 20
 timeResolution = 20.0
@@ -26,9 +26,7 @@ def nextEntityFromCSV(entitiesCSV):
 
         doAdd = True  # only add next entity, if there is nothing in the way
         if currentLen > 0:
-            if entities[0].collisionAtPoint(nextPosition[0], nextPosition[1], cellState, environment, entities):
-                doAdd = False
-            if entities[0].collisionAtPoint(nextPosition[0]+1, nextPosition[1], cellState, environment, entities):
+            if entities[0].collisionAtPoint(nextPosition[0]+0.25, nextPosition[1], cellState, environment, entities):
                 doAdd = False
         if doAdd:
             entities.append(
@@ -43,12 +41,10 @@ def initEnv():
             if int(2 * y / envResolution) != 4:
                 if int(2 * x / envResolution) % 2 == 0:
                     environment[x][y] = 1
-            if x < 0.5 * envResolution or x > (envWidth - 0.5) * envResolution - 1:
+            if x < 0.2 * envResolution or x > (envWidth - 0.5) * envResolution - 1:
                 environment[x][y] = 2
             if y < 0.5 * envResolution or y > (envHeight - 0.5) * envResolution - 1:
                 environment[x][y] = 2
-    # entities.append(Entity(index=1, target=(3.5, 0.5), position=(0.75, 2.24), diameter=0.32))
-    # entitiesToCellState()
 
 
 def entitiesToCellState():  # writes the index of the entity in the corresponding cell
@@ -70,7 +66,7 @@ def main():
     running = True
     start_time = time.time()
     currentStepNumber = 0
-    entitiesCSV = pd.read_csv("testBoarding.csv")
+    entitiesCSV = pd.read_csv("out.csv")
     testC=0
     while running:
         current_time = time.time()
