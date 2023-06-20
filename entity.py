@@ -4,7 +4,7 @@ from main import envResolution, timeResolution, envWidth, envHeight
 
 class Entity:
     def __init__(self, index=0, target=(0.0, 0.0), position=(0.0, 0.0), diameter=0.2, speed=1.0, seated=False,
-                 changeSeatFor=-1, awaitingSeatChangeFor=-1, awaitedSeatChangeFor=-1):
+                 changeSeatFor=-1, awaitingSeatChangeFor=-1, awaitedSeatChangeFor=-1, pleaseMoveX=0, wait=0):
         self.index = index
         self.target = target
         self.position = position
@@ -14,6 +14,8 @@ class Entity:
         self.changeSeatFor = changeSeatFor
         self.awaitingSeatChangeFor = awaitingSeatChangeFor
         self.awaitedSeatChangeFor = awaitedSeatChangeFor
+        self.pleaseMoveX = pleaseMoveX
+        self.wait = wait
 
     def collisionAtPoint(self, xNext, yNext, cellStateInternal, environmentInternal, entities, giveBackEntity=False):
         neighbours = []  # list of all neighbours in range in format (entityIndex, dist)
@@ -40,7 +42,7 @@ class Entity:
         for neighbour in neighbours:
             if neighbour[1] < (entities[neighbour[0]].diameter + self.diameter) / 2:  # collision with passanger
                 collision = True
-            if neighbour[1] < (entities[neighbour[0]].diameter + self.diameter) * 0.9:
+            if neighbour[1] < (entities[neighbour[0]].diameter + self.diameter) * 0.5:
                 whichNeighbour = neighbour[0]
         if walls[2] < self.diameter * 0.5:  # collision with wall
             collision = True
@@ -49,11 +51,13 @@ class Entity:
         return collision
 
     def isEntityInWay(self, xIs, yIs, xSeat, ySeat, cellStateInternal, environmentInternal, entities):
-        EntityInWay = 0
-        for i in range(3):  # try in 5 steps, if there is someone in the way
-            EntityInWay = self.collisionAtPoint(xIs * (i / 3.0) + xSeat * (1 - i / 3.0),
-                                                yIs * (i / 3.0) + ySeat * (1 - i / 3.0),
+        EntityInWay = -1
+        for i in range(5):  # try in 5 steps, if there is someone in the way
+            z=self.collisionAtPoint(xIs * (i / 5.0) + xSeat * (1 - i / 5.0),
+                                                yIs * (i / 5.0) + ySeat * (1 - i / 5.0),
                                                 cellStateInternal, environmentInternal, entities, giveBackEntity=True)
+            if z>=0:
+                EntityInWay=z
         return EntityInWay
 
     def nextStep(self, cellStateInternal, environmentInternal, entities):
@@ -67,7 +71,19 @@ class Entity:
 
         targetVector = (0, 0)  # target direction vector
 
-        if self.changeSeatFor >= 0:
+        if self.pleaseMoveX > 0:
+            self.wait -= timeResolution
+            if self.wait <= 0:
+                self.pleaseMoveX = 0
+            error = (self.pleaseMoveX - xIs) * 10  # target
+            if abs(error) > 0.1:  # move down
+                if abs(error) > 1:
+                    error /= abs(error)
+                targetVector = (error * self.speed / timeResolution, 0)
+                xNext = xIs + targetVector[0]
+                yNext = yIs + targetVector[1]
+
+        elif self.changeSeatFor >= 0:
             if self.seated:  # stand up
                 self.seated = False
                 self.position = (xSeat - 0.15, ySeat)
@@ -94,10 +110,19 @@ class Entity:
                 if abs(error) > 1:
                     error /= abs(error)
                 targetVector = (error * self.speed / timeResolution, 0)
+                if targetVector[0] < 0:
+                    collision = self.collisionAtPoint(xIs - 0.5, yIs, cellStateInternal, environmentInternal, entities,
+                                                      giveBackEntity=True)
+                    if collision >= 0:
+                        entities[collision].pleaseMoveX = xIs - 0.5
+                        entities[collision].wait = 1
+
+
             else:
                 self.awaitingSeatChangeFor = self.isEntityInWay(xIs, yIs, xSeat, ySeat, cellStateInternal,
                                                                 environmentInternal, entities)
                 if self.awaitingSeatChangeFor >= 0:
+                    print(f"{self.index}   {self.awaitingSeatChangeFor}")
                     self.awaitedSeatChangeFor = self.awaitingSeatChangeFor
                     entities[self.awaitingSeatChangeFor].changeSeatFor = self.index - 1
                 error = (ySeat - yIs) * 10  # slow down near target
@@ -115,6 +140,7 @@ class Entity:
             if not self.seated:
                 xNext = xIs + targetVector[0]
                 yNext = yIs + targetVector[1]
+
         else:
             if xSeat - 0.5 < xIs:
                 targetVector = (-self.speed / timeResolution, 0)
@@ -123,16 +149,6 @@ class Entity:
 
         if xNext != xIs or yNext != yIs:
             collision = self.collisionAtPoint(xNext, yNext, cellStateInternal, environmentInternal, entities)
-            if collision:
-                targetVector = (0, -self.speed / timeResolution)
-                xNext = xIs + targetVector[0]
-                yNext = yIs + targetVector[1]
-                collision = self.collisionAtPoint(xNext, yNext, cellStateInternal, environmentInternal, entities)
-            if collision:
-                targetVector = (0, +self.speed / timeResolution)
-                xNext = xIs + targetVector[0]
-                yNext = yIs + targetVector[1]
-                collision = self.collisionAtPoint(xNext, yNext, cellStateInternal, environmentInternal, entities)
 
             if not collision:
                 self.position = (xNext, yNext)

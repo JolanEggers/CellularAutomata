@@ -28,6 +28,8 @@ def nextEntityFromCSV(entitiesCSV):
         if currentLen > 0:
             if entities[0].collisionAtPoint(nextPosition[0], nextPosition[1], cellState, environment, entities):
                 doAdd = False
+            if entities[0].collisionAtPoint(nextPosition[0]+1, nextPosition[1], cellState, environment, entities):
+                doAdd = False
         if doAdd:
             entities.append(
                 Entity(index=nextIndex, target=nextTarget, position=nextPosition, diameter=nextDiameter,
@@ -69,6 +71,7 @@ def main():
     start_time = time.time()
     currentStepNumber = 0
     entitiesCSV = pd.read_csv("testBoarding.csv")
+    testC=0
     while running:
         current_time = time.time()
         elapsed_time = current_time - start_time
@@ -76,9 +79,12 @@ def main():
             start_time = current_time
             nextStep()
             if currentStepNumber % (1 * timeResolution) == 0:
-                nextEntityFromCSV(entitiesCSV)
+                if testC==0:
+                    nextEntityFromCSV(entitiesCSV)
             currentStepNumber = currentStepNumber + 1
         for event in pygame.event.get():
+            if event.type==768:
+                testC=1-testC
             if event.type == pygame.QUIT:
                 running = False
         showSpace(envWidth, envHeight, envResolution, environment, cellState, entities)
