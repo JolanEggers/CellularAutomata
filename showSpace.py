@@ -30,6 +30,8 @@ def showSpace(envWidth, envHeight, envResolution, environment, cellState, entiti
         for y in range(int(envHeight * envResolution)):  # loops for entities
             if cellState[x][y] > 0:  # passanger
                 cellColor = (245, 245, 220)
+                if not entities[int(cellState[x][y]) - 1].luggageStored:
+                    cellColor = (180, 225, 225)
                 if entities[int(cellState[x][y]) - 1].changeSeatFor >= 0:
                     cellColor = (245, 10, 245)
                 if len(entities[int(cellState[x][y]) - 1].awaitingSeatChangeFor) > 0:

@@ -71,7 +71,10 @@ class Entity:
 
     def nextStep(self, cellStateInternal, environmentInternal, entities):
         if self.state == 0:
-            self.moveToX(cellStateInternal, environmentInternal, entities)
+            if self.pleaseMoveX != 0:  # asked to move back
+                self.moveBack(cellStateInternal, environmentInternal, entities)
+            else:
+                self.moveToX(cellStateInternal, environmentInternal, entities)
 
         if self.state == 1:
             self.storeLuggage()
@@ -177,10 +180,35 @@ class Entity:
             targetVector = (self.position[0] + error * self.speed / timeResolution, self.position[1])
             collision = self.collisionAtPoint(targetVector[0], targetVector[1], cellStateInternal, environmentInternal,
                                               entities)
+            entityInWay = self.collisionAtPoint(targetVector[0], targetVector[1], cellStateInternal,
+                                                environmentInternal,
+                                                entities, giveBackEntity=True)
+            for entity in entityInWay:  # ask other person to step back
+                entities[entity].pleaseMoveX = self.position[0] - self.diameter * 2
             if not collision:
                 self.position = targetVector
         else:  # next step
             self.state = 5
+
+    def moveBack(self, cellStateInternal, environmentInternal, entities):
+        error = (self.pleaseMoveX - self.position[0]) * 10  # target
+        if abs(error) > 0.1:
+            if abs(error) > 1:
+                error /= abs(error)
+            targetVector = (self.position[0] + error * self.speed / timeResolution, self.position[1])
+            collision = self.collisionAtPoint(targetVector[0], targetVector[1], cellStateInternal, environmentInternal,
+                                              entities)
+            entityInWay = self.collisionAtPoint(targetVector[0] - self.diameter, targetVector[1], cellStateInternal,
+                                                environmentInternal,
+                                                entities, giveBackEntity=True)
+            for entity in entityInWay:  # ask other person to step back
+                entities[entity].pleaseMoveX = self.position[0] - self.diameter * 2
+            if not collision:
+                self.position = targetVector
+            if collision and len(entityInWay) == 0:  # standing against wall
+                self.pleaseMoveX = 0
+        else:
+            self.pleaseMoveX = 0  # continue forward
 
     def moveToX(self, cellStateInternal, environmentInternal, entities):
         error = (self.target[0] - 0.2 - self.position[0]) * 10  # target
@@ -190,16 +218,24 @@ class Entity:
             targetVector = (self.position[0] + error * self.speed / timeResolution, self.position[1])
             collision = self.collisionAtPoint(targetVector[0], targetVector[1], cellStateInternal, environmentInternal,
                                               entities)
-            collision2 = self.collisionAtPoint(targetVector[0] + self.diameter, targetVector[1], cellStateInternal,
-                                               environmentInternal,
-                                               entities)
-            collision3 = self.collisionAtPoint(targetVector[0] + self.diameter * 2, targetVector[1], cellStateInternal,
-                                               environmentInternal,
-                                               entities)
-            collision4 = self.collisionAtPoint(targetVector[0] + self.diameter * 3, targetVector[1], cellStateInternal,
-                                               environmentInternal,
-                                               entities)
-            if not collision and not collision2 and not collision3 and not collision4:  # leave enough space
+            entityInWay = self.collisionAtPoint(targetVector[0] + self.diameter, targetVector[1], cellStateInternal,
+                                                environmentInternal,
+                                                entities, giveBackEntity=True)
+            entityInWay.extend(
+                self.collisionAtPoint(targetVector[0] + self.diameter * 2, targetVector[1], cellStateInternal,
+                                      environmentInternal,
+                                      entities, giveBackEntity=True))
+            entityInWay.extend(
+                self.collisionAtPoint(targetVector[0] + self.diameter * 3, targetVector[1], cellStateInternal,
+                                      environmentInternal,
+                                      entities, giveBackEntity=True))
+            entityInWay = list(dict.fromkeys(entityInWay))
+            collision2 = False
+            for entity in entityInWay:
+                if entities[entity].state != 0:
+                    collision2 = True
+
+            if not collision and not collision2:  # leave enough space
                 self.position = targetVector
         else:  # next step
             self.state = 1
