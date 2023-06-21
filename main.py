@@ -92,8 +92,21 @@ def main():
             start_time = current_time
             nextStep()
             if isOptimal(entitiesCSV):
-                with open("randomBoardingResults.csv", "a") as myfile:
-                    myfile.write(f",{currentStepNumber}")
+                #with open("frontToBack3GroupsResult.csv", "a") as myfile:
+                #    myfile.write(f",{currentStepNumber}")
+                #with open("backToFront3GroupsResult.csv", "a") as myfile:
+                #    myfile.write(f",{currentStepNumber}")
+                #with open("randomSeatingResult.csv", "a") as myfile:
+                #    myfile.write(f",{currentStepNumber}")
+                #with open("steffenModifiedResult.csv", "a") as myfile:
+                #    myfile.write(f",{currentStepNumber}")
+                #with open("windowMiddleAisleResult.csv", "a") as myfile:
+                #    myfile.write(f",{currentStepNumber}")
+                #with open("steffenPerfectResult.csv", "a") as myfile:
+                #    myfile.write(f",{currentStepNumber}")
+
+                with open("backToFront3GroupsLuggage.csv", "a") as myfile:
+                    myfile.write(f"{entities[0].storeLuggageTime},{currentStepNumber}\n")
                 running = False
                 print(currentStepNumber)
             if currentStepNumber % (timeResolution) == 0:
@@ -105,7 +118,8 @@ def main():
                 testC = 1 - testC
             if event.type == pygame.QUIT:
                 running = False
-        #showSpace(envWidth, envHeight, envResolution, environment, cellState, entities)
+        if int(current_time*1000)%1000<10:
+            showSpace(envWidth, envHeight, envResolution, environment, cellState, entities)
 
 
 if __name__ == "__main__":

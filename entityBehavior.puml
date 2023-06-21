@@ -1,0 +1,30 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+start
+repeat
+:move to X Position of Seat;
+if (Luggage stored) then (false)
+    :store Luggage;
+else (true)
+endif
+if (passanger in Way) then (true)
+    :makeWay;
+    :tellOthersToChangeSeats;
+    :waitForOthersToGetOutOfWay;
+
+else (false)
+:move to Y Position of Seat;
+:sit down;
+while (request to change seat) is (false)
+end while (true)
+:move back to aisle;
+:move out of way;
+while (seat is changed) is (false)
+end while (true)
+endif
+repeatwhile
+
+
+
+@enduml

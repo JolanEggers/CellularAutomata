@@ -4,7 +4,6 @@ import subprocess
 while True:
     with open("seatPlaner.py") as f:
         exec(f.read())
-    sleep(1)
     cmd = ['python', 'main.py']  # the external command to run
     timeout_s = 30  # how many seconds to wait
     try:

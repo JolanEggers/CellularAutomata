@@ -8,7 +8,7 @@ from main import envResolution, timeResolution, envWidth, envHeight
 class Entity:
     def __init__(self, index=0, target=(0.0, 0.0), position=(0.0, 0.0), diameter=0.2, speed=1.0, seated=False,
                  changeSeatFor=-1, awaitingSeatChangeFor=None, awaitedSeatChangeFor=None, pleaseMoveX=0, wait=-1,
-                 luggageStored=False, state=0):
+                 luggageStored=False, state=0,storeLuggageTime=2.0):
         if awaitingSeatChangeFor is None:
             awaitingSeatChangeFor = []
         if awaitedSeatChangeFor is None:
@@ -26,6 +26,7 @@ class Entity:
         self.wait = wait
         self.luggageStored = luggageStored
         self.state = state
+        self.storeLuggageTime = storeLuggageTime
 
     def collisionAtPoint(self, xNext, yNext, cellStateInternal, environmentInternal, entities, giveBackEntity=False):
         neighbours = []  # list of all neighbours in range in format (entityIndex, dist)
@@ -223,7 +224,7 @@ class Entity:
             if abs(error) > 1:
                 error /= abs(error)
             targetVector = (self.position[0] + error * self.speed / timeResolution, self.position[1])
-            collision = self.collisionAtPoint(targetVector[0], targetVector[1], cellStateInternal, environmentInternal,
+            collision = self.collisionAtPoint(targetVector[0]+ self.diameter * 1.8, targetVector[1], cellStateInternal, environmentInternal,
                                               entities)
             entityInWay = self.collisionAtPoint(targetVector[0] + self.diameter, targetVector[1], cellStateInternal,
                                                 environmentInternal,
@@ -263,7 +264,7 @@ class Entity:
     def storeLuggage(self):
         if not self.luggageStored:
             if self.wait == -1:
-                self.wait = 2
+                self.wait = self.storeLuggageTime
             self.wait -= 1 / timeResolution
             if self.wait <= 0:
                 self.luggageStored = True
