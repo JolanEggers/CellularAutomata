@@ -246,8 +246,8 @@ def windowMiddleAisle():
 
 #entityNumbers, availableSeats = randomSeating()
 #entityNumbers, availableSeats = steffenPerfect()
-entityNumbers, availableSeats = backToFront3Groups()
-#entityNumbers, availableSeats = frontToBack3Groups()
+#entityNumbers, availableSeats = backToFront3Groups()
+entityNumbers, availableSeats = frontToBack3Groups()
 #entityNumbers, availableSeats = steffenModified()
 #entityNumbers, availableSeats = windowMiddleAisle()
 
@@ -259,5 +259,5 @@ for i in range(len(entityNumbers)):
     seatPlan.append([(i + 1), targetX, targetY, 0.75, 2.24, 0.3, 1])
 
 df = pd.DataFrame(seatPlan, columns=["index", "targetX", "targetY", "positionX", "positionY", "diameter", "speed"])
-df.to_csv('out.csv', index=False)
+df.to_csv('seatingPlan.csv', index=False)
 print(df)

@@ -4,6 +4,7 @@
 start
 repeat
 :move to X Position of Seat;
+
 if (Luggage stored) then (false)
     :store Luggage;
 else (true)

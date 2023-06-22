@@ -83,12 +83,12 @@ def main():
     running = True
     start_time = time.time()
     currentStepNumber = 0
-    entitiesCSV = pd.read_csv("out.csv")
+    entitiesCSV = pd.read_csv("seatingPlan.csv")
     testC = 0
     while running:
         current_time = time.time()
         elapsed_time = current_time - start_time
-        if elapsed_time >= 0.0:  # 50 steps per second
+        if elapsed_time >= 0.02:  # 50 steps per second
             start_time = current_time
             nextStep()
             if isOptimal(entitiesCSV):
@@ -105,9 +105,9 @@ def main():
                 #with open("steffenPerfectResult.csv", "a") as myfile:
                 #    myfile.write(f",{currentStepNumber}")
 
-                with open("backToFront3GroupsLuggage.csv", "a") as myfile:
-                    myfile.write(f"{entities[0].storeLuggageTime},{currentStepNumber}\n")
-                running = False
+                #with open("backToFront3GroupsLuggage.csv", "a") as myfile:
+                #    myfile.write(f"{entities[0].storeLuggageTime},{currentStepNumber}\n")
+                #running = False
                 print(currentStepNumber)
             if currentStepNumber % (timeResolution) == 0:
                 if testC == 0:
@@ -118,8 +118,8 @@ def main():
                 testC = 1 - testC
             if event.type == pygame.QUIT:
                 running = False
-        if int(current_time*1000)%1000<10:
-            showSpace(envWidth, envHeight, envResolution, environment, cellState, entities)
+        #if int(current_time*1000)%1000<10:
+        showSpace(envWidth, envHeight, envResolution, environment, cellState, entities)
 
 
 if __name__ == "__main__":
