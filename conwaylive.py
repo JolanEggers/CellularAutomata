@@ -19,7 +19,7 @@ cellState = np.zeros((envWidth, envHeight))
 
 
 gridSize = 0.04
-timeStep = 1
+timeStep = 0.2
 
 
 def initEnv():
