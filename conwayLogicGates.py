@@ -11,14 +11,14 @@ WINDOW_SIZE = (screenWidth, screenHeight)
 screen = pygame.display.set_mode(WINDOW_SIZE)
 font = pygame.font.Font(None, 36)
 
-envWidth = 80
+envWidth = 100
 envHeight = 80
 
 cellState = np.zeros((envWidth, envHeight))
 # Set the colors
 
 
-gridSize = 0.01
+gridSize = 0.007
 timeStep = 0.02
 
 aActive = True
@@ -65,26 +65,95 @@ def GlidergunLD(x, y):  # LD:=left and down
     cellState[x + 25][y + 5] = 1
     cellState[x + 25][y + 6] = 1
 
-def GliderRD(x,y):
+
+def GlidergunRD(x, y):  # LD:=left and down
+    cellState[x + 35 - 0][y + 2] = 1  # left square
+    cellState[x + 35 - 0][y + 3] = 1
+    cellState[x + 35 - 1][y + 2] = 1
+    cellState[x + 35 - 1][y + 3] = 1
+    cellState[x + 35 - 34][y + 4] = 1  # right square
+    cellState[x + 35 - 34][y + 5] = 1
+    cellState[x + 35 - 35][y + 4] = 1
+    cellState[x + 35 - 35][y + 5] = 1
+    #
+    cellState[x + 35 - 11][y + 0] = 1
+    cellState[x + 35 - 11][y + 1] = 1
+    cellState[x + 35 - 11][y + 5] = 1
+    cellState[x + 35 - 11][y + 6] = 1
+    cellState[x + 35 - 13][y + 1] = 1
+    cellState[x + 35 - 13][y + 5] = 1
+    cellState[x + 35 - 14][y + 2] = 1
+    cellState[x + 35 - 14][y + 3] = 1
+    cellState[x + 35 - 14][y + 4] = 1
+    cellState[x + 35 - 15][y + 2] = 1
+    cellState[x + 35 - 15][y + 3] = 1
+    cellState[x + 35 - 15][y + 4] = 1
+    #
+    cellState[x + 35 - 18][y + 5] = 1
+    cellState[x + 35 - 19][y + 4] = 1
+    cellState[x + 35 - 19][y + 5] = 1
+    cellState[x + 35 - 19][y + 6] = 1
+    cellState[x + 35 - 20][y + 3] = 1
+    cellState[x + 35 - 20][y + 7] = 1
+    cellState[x + 35 - 21][y + 5] = 1
+    cellState[x + 35 - 22][y + 2] = 1
+    cellState[x + 35 - 22][y + 8] = 1
+    cellState[x + 35 - 23][y + 2] = 1
+    cellState[x + 35 - 23][y + 8] = 1
+    cellState[x + 35 - 24][y + 3] = 1
+    cellState[x + 35 - 24][y + 7] = 1
+    cellState[x + 35 - 25][y + 4] = 1
+    cellState[x + 35 - 25][y + 5] = 1
+    cellState[x + 35 - 25][y + 6] = 1
+
+
+def GliderRD(x, y):
     cellState[2 + x][0 + y] = 1
     cellState[0 + x][1 + y] = 1
     cellState[2 + x][1 + y] = 1
     cellState[1 + x][2 + y] = 1
     cellState[2 + x][2 + y] = 1
 
-def GliderTerminatorRD(x,y): # Terminates Glider, going in the R-D-Direction
-    cellState[x+2][y+0] = 1
-    cellState[x+3][y+0] = 1
-    cellState[x+1][y+1] = 1
-    cellState[x+3][y+1] = 1
-    cellState[x+1][y+2] = 1
-    cellState[x+0][y+3] = 1
-    cellState[x+1][y+3] = 1
+
+def GliderTerminatorRD(x, y):  # Terminates Glider, going in the R-D-Direction
+    cellState[x + 2][y + 0] = 1
+    cellState[x + 3][y + 0] = 1
+    cellState[x + 1][y + 1] = 1
+    cellState[x + 3][y + 1] = 1
+    cellState[x + 1][y + 2] = 1
+    cellState[x + 0][y + 3] = 1
+    cellState[x + 1][y + 3] = 1
+
+def GliderTerminatorLD(x, y):  # Terminates Glider, going in the L-D-Direction
+    cellState[x + 1][y + 0] = 1
+    cellState[x + 0][y + 0] = 1
+    cellState[x + 2][y + 1] = 1
+    cellState[x + 0][y + 1] = 1
+    cellState[x + 2][y + 2] = 1
+    cellState[x + 3][y + 3] = 1
+    cellState[x + 2][y + 3] = 1
+
 
 isInit = True
 
 
 def initEnv():
+    # OR Gate
+    global isInit
+    if isInit:
+        isInit = False
+        GlidergunLD(50, 4)
+        GlidergunRD(0, 20)
+
+    if aActive:
+        GliderRD(40, 4)
+
+    if bActive:
+        GliderRD(40, 12)
+
+    GliderTerminatorLD(59, 30)
+    '''
+    #AND Gate
     global isInit
     # Glidergun
     if isInit:
@@ -99,27 +168,24 @@ def initEnv():
         GliderRD(2 ,4)
 
     GliderTerminatorRD(10,38)
+    '''
+    # x = 11 + 8 * 2
+    # y = 10
+    # cellState[-3 + x][1 + y] = 1
+    # cellState[-1 + x][2 + y] = 1
+    # cellState[-3 + x][2 + y] = 1
+    # cellState[-2 + x][3 + y] = 1
+    # cellState[-3 + x][3 + y] = 1
 
-    #x = 11 + 8 * 2
-    #y = 10
-    #cellState[-3 + x][1 + y] = 1
-    #cellState[-1 + x][2 + y] = 1
-    #cellState[-3 + x][2 + y] = 1
-    #cellState[-2 + x][3 + y] = 1
-    #cellState[-3 + x][3 + y] = 1
-
-
-
-    #x = 32 -8*1
-    #y = 31 - 8*2
-    #cellState[x + 3 - 2][y + 0] = 1
-    #cellState[x + 3 - 3][y + 0] = 1
-    #cellState[x + 3 - 1][y + 1] = 1
-    #cellState[x + 3 - 3][y + 1] = 1
-    #cellState[x + 3 - 1][y + 2] = 1
-    #cellState[x + 3 - 0][y + 3] = 1
-    #cellState[x + 3 - 1][y + 3] = 1
-
+    # x = 32 -8*1
+    # y = 31 - 8*2
+    # cellState[x + 3 - 2][y + 0] = 1
+    # cellState[x + 3 - 3][y + 0] = 1
+    # cellState[x + 3 - 1][y + 1] = 1
+    # cellState[x + 3 - 3][y + 1] = 1
+    # cellState[x + 3 - 1][y + 2] = 1
+    # cellState[x + 3 - 0][y + 3] = 1
+    # cellState[x + 3 - 1][y + 3] = 1
 
 
 def nextStep():  # check for only one step forward possible
