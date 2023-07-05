@@ -114,6 +114,19 @@ def GliderRD(x, y):
     cellState[1 + x][2 + y] = 1
     cellState[2 + x][2 + y] = 1
 
+def GliderLD(x, y):
+    #cellState[0 + x][0 + y] = 1
+    #cellState[2 + x][1 + y] = 1
+    #cellState[0 + x][1 + y] = 1
+    #cellState[1 + x][2 + y] = 1
+    #cellState[0 + x][2 + y] = 1
+
+    cellState[0 + x][0 + y] = 1
+    cellState[2 + x][0 + y] = 1
+    cellState[0 + x][1 + y] = 1
+    cellState[1 + x][1 + y] = 1
+    cellState[1 + x][2 + y] = 1
+
 
 def GliderTerminatorRD(x, y):  # Terminates Glider, going in the R-D-Direction
     cellState[x + 2][y + 0] = 1
@@ -123,6 +136,7 @@ def GliderTerminatorRD(x, y):  # Terminates Glider, going in the R-D-Direction
     cellState[x + 1][y + 2] = 1
     cellState[x + 0][y + 3] = 1
     cellState[x + 1][y + 3] = 1
+
 
 def GliderTerminatorLD(x, y):  # Terminates Glider, going in the L-D-Direction
     cellState[x + 1][y + 0] = 1
@@ -134,10 +148,56 @@ def GliderTerminatorLD(x, y):  # Terminates Glider, going in the L-D-Direction
     cellState[x + 2][y + 3] = 1
 
 
+def Reflector1(x, y):
+    cellState[x + 1][y + 1] = 1
+
+    cellState[x + 1][y + 2] = 1
+    cellState[x + 2][y + 2] = 1
+    cellState[x + 3][y + 2] = 1
+
+    cellState[x + 4][y + 3] = 1
+
+    cellState[x + 3][y + 4] = 1
+    cellState[x + 4][y + 4] = 1
+
+    cellState[x + 3][y + 14] = 1
+    cellState[x + 4][y + 14] = 1
+    cellState[x + 8][y + 14] = 1
+    cellState[x + 9][y + 14] = 1
+
+    cellState[x + 5][y + 15] = 1
+    cellState[x + 6][y + 15] = 1
+    cellState[x + 7][y + 15] = 1
+
+    cellState[x + 4][y + 16] = 1
+    cellState[x + 8][y + 16] = 1
+
+    cellState[x + 5][y + 17] = 1
+    cellState[x + 7][y + 17] = 1
+
+    cellState[x + 6][y + 18] = 1
+
+    cellState[x + 5][y + 22] = 1
+    cellState[x + 6][y + 22] = 1
+    cellState[x + 5][y + 23] = 1
+    cellState[x + 6][y + 23] = 1
+
+
 isInit = True
 
 
 def initEnv():
+    # Not-Gate
+    global isInit
+    if isInit:
+        isInit = False
+        GlidergunLD(15, 2)
+
+        Reflector1(4, 22)
+
+    if aActive:
+        GliderRD(4, 5)
+    '''
     # OR Gate
     global isInit
     if isInit:
@@ -152,7 +212,7 @@ def initEnv():
         GliderRD(40, 12)
 
     GliderTerminatorLD(59, 30)
-    '''
+
     #AND Gate
     global isInit
     # Glidergun
