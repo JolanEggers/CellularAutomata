@@ -1,9 +1,13 @@
 import math
-
+#import enum
 import numpy as np
 
 from main import envResolution, timeResolution, envWidth, envHeight
+#class X(enum.ENUM):# TODO change state numbers to readable enums
 
+#    def __init__(self):
+#        X.typA = 1
+#        X.typB = 2
 
 class Entity:
     def __init__(self, index=0, target=(0.0, 0.0), position=(0.0, 0.0), diameter=0.2, speed=1.0, seated=False,

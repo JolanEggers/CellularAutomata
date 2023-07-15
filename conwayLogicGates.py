@@ -12,18 +12,21 @@ screen = pygame.display.set_mode(WINDOW_SIZE)
 font = pygame.font.Font(None, 36)
 
 envWidth = 100
-envHeight = 80
+envHeight = 60
 
 cellState = np.zeros((envWidth, envHeight))
 # Set the colors
 
 
-gridSize = 0.007
+gridSize = 0.01
 timeStep = 0.02
 
-aActive = True
-bActive = True
+aActive = False
+bActive = False
 
+showAndGate =  False
+showOrGate  = True
+showNotGate  = False
 
 def GlidergunLD(x, y):  # LD:=left and down
     cellState[x + 0][y + 2] = 1  # left square
@@ -187,47 +190,48 @@ isInit = True
 
 
 def initEnv():
-    # Not-Gate
     global isInit
-    if isInit:
-        isInit = False
-        GlidergunLD(15, 2)
+    if showNotGate:
+        # Not-Gate
+        if isInit:
+            isInit = False
+            GlidergunLD(15, 2)
 
-        Reflector1(4, 22)
+            Reflector1(4, 22)
 
-    if aActive:
-        GliderRD(4, 5)
-    '''
-    # OR Gate
-    global isInit
-    if isInit:
-        isInit = False
-        GlidergunLD(50, 4)
-        GlidergunRD(0, 20)
+        if aActive:
+            GliderRD(4, 5)
 
-    if aActive:
-        GliderRD(40, 4)
+    if showOrGate:
+        # OR Gate
+        if isInit:
+            isInit = False
+            GlidergunLD(50, 4)
+            GlidergunRD(0, 20)
 
-    if bActive:
-        GliderRD(40, 12)
+        if aActive:
+            GliderRD(40, 4)
 
-    GliderTerminatorLD(59, 30)
+        if bActive:
+            GliderRD(40, 12)
 
-    #AND Gate
-    global isInit
-    # Glidergun
-    if isInit:
-        isInit = False
-        GlidergunLD(18+8, 4)
+        GliderTerminatorLD(59, 30)
+
+    if showAndGate:
+        #AND Gate
+        if isInit:
+            isInit = False
+            GlidergunLD(18+8, 4)
 
 
-    if aActive:
-        GliderRD(2,12)
+        if aActive:
+            GliderRD(2,12)
 
-    if bActive:
-        GliderRD(2 ,4)
+        if bActive:
+            GliderRD(2 ,4)
 
-    GliderTerminatorRD(10,38)
+        GliderTerminatorRD(10,38)
+
     '''
     # x = 11 + 8 * 2
     # y = 10
@@ -246,7 +250,7 @@ def initEnv():
     # cellState[x + 3 - 1][y + 2] = 1
     # cellState[x + 3 - 0][y + 3] = 1
     # cellState[x + 3 - 1][y + 3] = 1
-
+    '''
 
 def nextStep():  # check for only one step forward possible
     global cellState
@@ -274,7 +278,7 @@ def showSpace():
             if cellState[x][y] == 1:  # entity
                 cellColor = aliveColor
             pygame.draw.rect(screen, cellColor, (
-                screenWidth * 0.1 + x * screenWidth * gridSize, screenHeight * 0.1 + y * screenWidth * gridSize,
+                screenWidth * 0.0 + x * screenWidth * gridSize, screenHeight * 0.0 + y * screenWidth * gridSize,
                 screenWidth * gridSize * 0.95, screenWidth * gridSize * 0.95))
     pygame.display.flip()
 
@@ -292,6 +296,7 @@ def main():
         if elapsed_time >= timeStep:  # 50 steps per second
             start_time = current_time
             nextStep()
+            #pygame.image.save(screen, f"./imgCapture/screenshot{100000+currentStepNumber}.png")
             if currentStepNumber % 30 == 29:
                 initEnv()
             currentStepNumber = currentStepNumber + 1
